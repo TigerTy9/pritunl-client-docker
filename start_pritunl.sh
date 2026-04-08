@@ -2,9 +2,20 @@
 
 connect_and_wait() {
     profile=$(pritunl-client list | awk 'NR==4 {print $2}')
-    echo "starting pritunl profile $profile"
-    pritunl-client start $profile
+    
+    # Check if the WireGuard toggle is set to true
+    if [ "$USE_WIREGUARD" = "true" ]; then
+        echo "Starting pritunl profile $profile in WireGuard mode"
+        # The -wg flag forces WireGuard mode in the official client
+        pritunl-client start $profile -wg
+    else
+        echo "Starting pritunl profile $profile in standard mode (OpenVPN)"
+        pritunl-client start $profile
+    fi
+
     echo "pritunl profile $profile started"
+    
+    # Wait for it to stop
     while [ "$(pritunl-client list | awk 'NR==4 {print $7}')" != "Inactive" ]; do
         sleep 5
     done
