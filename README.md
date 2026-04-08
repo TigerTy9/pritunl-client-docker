@@ -10,7 +10,7 @@ To run this container, set the following environment variables in your TrueNAS C
 
 | Variable | Description |
 | :--- | :--- |
-| `PRITUNL_URL` | Your `pritunl://` profile URI link. |
+| `PRITUNL_PROFILE` | Your `pritunl://` profile URI link. |
 | `USE_WIREGUARD` | Set to `true` to force WireGuard mode. Defaults to OpenVPN. |
 
 ### Required Container Permissions
