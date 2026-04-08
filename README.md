@@ -56,6 +56,28 @@ Run these commands on your **Pritunl Server** host to allow the client to connec
 
 ---
 
+## Troubleshooting: Zombie Interfaces
+
+If the container crashes or is updated while a WireGuard tunnel is active, the `wg0` interface may remain "Up" in the host kernel even after the container is gone. This will cause the App status to show as **Offline** or fail to redeploy due to an IP/interface conflict.
+
+### How to clear a stuck interface
+Run the following commands in the TrueNAS shell to manually tear down the zombie interface:
+
+1. **Check if the interface exists:**
+   ```bash
+   ip a | grep wg0
+   ```
+
+2. **Delete the interface:**
+   ```bash
+   sudo ip link delete wg0
+   ```
+
+3. **Verify it is gone:**
+   Run `ip a` again. Once the interface is removed, the TrueNAS App should be able to transition back to a **Deploying** or **Active** state.
+
+---
+
 ## Improvements and Dependencies
 
 This version includes critical networking packages that are missing from the base client image, which are required for WireGuard support:
