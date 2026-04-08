@@ -7,3 +7,4 @@ services:
       - .env
     #environment:
     #  - PRITUNL_PROFILE=
+    #  - USE_WIREGUARD=
