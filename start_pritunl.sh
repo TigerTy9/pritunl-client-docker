@@ -7,7 +7,7 @@ connect_and_wait() {
     if [ "$USE_WIREGUARD" = "true" ]; then
         echo "Starting pritunl profile $profile in WireGuard mode"
         # The -wg flag forces WireGuard mode in the official client
-        pritunl-client start $profile -wg
+        pritunl-client start $profile -m wg
     else
         echo "Starting pritunl profile $profile in standard mode (OpenVPN)"
         pritunl-client start $profile
