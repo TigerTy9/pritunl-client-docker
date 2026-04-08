@@ -6,4 +6,4 @@ Current version uses [1.3.3883.60](https://github.com/pritunl/pritunl-client-ele
 
 ## Usage
 
-Set the environment variable `PRITUNL_PROFILE` to your profile url and run the container
+Set the environment variable `PRITUNL_PROFILE` to your profile url and run the container and `USE_WIREGUARD` to true if you want wireguard support.
