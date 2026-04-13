@@ -1,12 +1,13 @@
 #!/bin/bash
 
+# Path to store the last used profile URL for comparison
+CACHE_FILE="/var/lib/pritunl-client/last_url.txt"
+
 connect_and_wait() {
     profile=$(pritunl-client list | awk 'NR==4 {print $2}')
     
-    # Check if the WireGuard toggle is set to true
     if [ "$USE_WIREGUARD" = "true" ]; then
         echo "Starting pritunl profile $profile in WireGuard mode"
-        # The -wg flag forces WireGuard mode in the official client
         pritunl-client start $profile -m wg
     else
         echo "Starting pritunl profile $profile in standard mode (OpenVPN)"
@@ -15,7 +16,6 @@ connect_and_wait() {
 
     echo "pritunl profile $profile started"
     
-    # Wait for it to stop
     while [ "$(pritunl-client list | awk 'NR==4 {print $7}')" != "Inactive" ]; do
         sleep 5
     done
@@ -24,21 +24,37 @@ connect_and_wait() {
 
 sleep 5
 
-if [ "$(pritunl-client list | wc -l)" -eq 5 ]; then
-    echo "pritunl profile already exists"
+# Check if we need to force an update because the URL changed
+FORCE_UPDATE=false
+if [ -f "$CACHE_FILE" ]; then
+    LAST_URL=$(cat "$CACHE_FILE")
+    if [ "$LAST_URL" != "$PRITUNL_PROFILE" ]; then
+        echo "Detected profile URL change. Removing old profile..."
+        # Get the ID of the existing profile and remove it
+        OLD_ID=$(pritunl-client list | awk 'NR==4 {print $2}')
+        if [ ! -z "$OLD_ID" ]; then
+            pritunl-client remove $OLD_ID
+        fi
+        FORCE_UPDATE=true
+    fi
+else
+    FORCE_UPDATE=true
+fi
 
+# Logic to add/start
+if [ "$(pritunl-client list | wc -l)" -eq 5 ] && [ "$FORCE_UPDATE" = "false" ]; then
+    echo "pritunl profile already exists and URL has not changed."
     connect_and_wait 
     exit 1
-
-elif [ "$(pritunl-client list | wc -l)" -eq 4 ]; then
+else
     if [ -z "$PRITUNL_PROFILE" ]; then
         echo "pritunl profile is not set"
         exit 1
     else
-        pritunl-client add $PRITUNL_PROFILE
+        echo "Adding/Updating pritunl profile..."
+        pritunl-client add "$PRITUNL_PROFILE"
+        # Save the new URL to the cache file
+        echo "$PRITUNL_PROFILE" > "$CACHE_FILE"
         connect_and_wait
     fi
-else
-    echo "pritunl has more than one profile / or cli changed"
-    exit 1
 fi
