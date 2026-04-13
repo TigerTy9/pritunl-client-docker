@@ -17,7 +17,7 @@ To run this container, set the following environment variables in your TrueNAS C
 Because WireGuard operates at the kernel level, the container must have the following host-level permissions to function:
 * **Host Networking:** Enabled
 * **Privileged Mode:** Enabled
-* **Capabilities:** `NET_ADMIN`, `SYS_MODULE`, `NET_RAW`
+* **Capabilities:** `NET_ADMIN`, `SYS_MODULE`
 
 ---
 
