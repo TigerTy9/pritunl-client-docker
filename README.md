@@ -90,3 +90,9 @@ This version includes critical networking packages that are missing from the bas
 The startup script has been updated to use the `-m wg` flag when `USE_WIREGUARD` is enabled, ensuring the client properly initializes the WireGuard protocol.
 
 https://hub.docker.com/repository/docker/tythomasson/pritunl-client/general
+
+
+##BUILDING DOCKER
+docker build -t tythomasson/pritunl-client:latest .
+
+docker push yourusername/pritunl-client:latest
